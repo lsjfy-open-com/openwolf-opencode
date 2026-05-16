@@ -1,20 +1,20 @@
 # Hooks
 
-OpenWolf registers 6 hooks with Claude Code. They fire automatically on every action. No user interaction required.
+OpenWolf registers 6 hooks with OpenCode. They fire automatically on every action. No user interaction required.
 
-All hooks are **pure Node.js file I/O**. No network calls, no AI, no external dependencies. They read JSON on stdin from Claude Code and communicate via exit codes and stderr.
+All hooks are **pure Node.js file I/O**. No network calls, no AI, no external dependencies. They read JSON on stdin from OpenCode and communicate via exit codes and stderr.
 
 ## Hook Lifecycle
 
 ```
 ┌──────────────┐
-│ Claude Code   │
+│ OpenCode   │
 │ session start │──→  session-start.js  ──→ creates _session.json, logs to memory.md
 └──────┬───────┘
        │
        ▼
 ┌──────────────┐      ┌──────────────┐
-│ Claude wants  │──→   │ pre-read.js  │──→ warns on repeated reads, shows anatomy info
+│ OpenCode wants  │──→   │ pre-read.js  │──→ warns on repeated reads, shows anatomy info
 │ to READ      │      └──────────────┘
 └──────┬───────┘
        │ (read happens)
@@ -24,7 +24,7 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
 └──────────────┘      └──────────────┘
 
 ┌──────────────┐      ┌───────────────┐
-│ Claude wants  │──→   │ pre-write.js  │──→ checks cerebrum Do-Not-Repeat patterns
+│ OpenCode wants  │──→   │ pre-write.js  │──→ checks cerebrum Do-Not-Repeat patterns
 │ to WRITE     │      └───────────────┘
 └──────┬───────┘
        │ (write happens)
@@ -34,13 +34,13 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
 └──────────────┘      └────────────────┘
 
 ┌──────────────┐      ┌──────────┐
-│ Claude stops  │──→   │ stop.js  │──→ writes session summary to token-ledger.json
+│ OpenCode stops  │──→   │ stop.js  │──→ writes session summary to token-ledger.json
 └──────────────┘      └──────────┘
 ```
 
 ## `session-start.js`
 
-**Fires:** When a Claude Code session begins.
+**Fires:** When a OpenCode session begins.
 
 **What it does:**
 1. Creates a fresh `_session.json` in `.wolf/hooks/` with a unique session ID
@@ -53,7 +53,7 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
 
 ## `pre-read.js`
 
-**Fires:** Before Claude reads any file (via the Read tool).
+**Fires:** Before OpenCode reads any file (via the Read tool).
 
 **Stdin:** `{ "tool_name": "Read", "tool_input": { "file_path": "src/index.ts" } }`
 
@@ -71,7 +71,7 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
 
 ## `pre-write.js`
 
-**Fires:** Before Claude writes, edits, or multi-edits any file.
+**Fires:** Before OpenCode writes, edits, or multi-edits any file.
 
 **Stdin:** `{ "tool_name": "Write", "tool_input": { "file_path": "...", "content": "..." } }`
 
@@ -90,7 +90,7 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
 
 ## `post-read.js`
 
-**Fires:** After Claude successfully reads a file.
+**Fires:** After OpenCode successfully reads a file.
 
 **Stdin:** `{ "tool_input": { "file_path": "..." }, "tool_output": { "content": "..." } }`
 
@@ -104,7 +104,7 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
 
 ## `post-write.js`
 
-**Fires:** After Claude writes, edits, or multi-edits a file. This is the most important hook.
+**Fires:** After OpenCode writes, edits, or multi-edits a file. This is the most important hook.
 
 **Stdin:** `{ "tool_name": "Write", "tool_input": { "file_path": "...", "content": "..." } }`
 
@@ -119,7 +119,7 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
 
 ## `stop.js`
 
-**Fires:** When Claude finishes a response.
+**Fires:** When OpenCode finishes a response.
 
 **What it does:**
 1. Reads `_session.json` for accumulated session data
@@ -129,7 +129,7 @@ All hooks are **pure Node.js file I/O**. No network calls, no AI, no external de
    - Updates lifetime counters
    - Calculates estimated savings (anatomy hits + blocked repeated reads)
 
-**Note:** The stop hook fires every time Claude finishes a response, not just at session end. It only writes to the ledger when there's significant data.
+**Note:** The stop hook fires every time OpenCode finishes a response, not just at session end. It only writes to the ledger when there's significant data.
 
 **Timeout:** 10 seconds
 

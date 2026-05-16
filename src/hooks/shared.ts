@@ -3,8 +3,8 @@ import * as path from "node:path";
 import * as crypto from "node:crypto";
 
 export function getWolfDir(): string {
-  // Prefer CLAUDE_PROJECT_DIR so hooks work even if CWD changes during a session
-  const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+  // Prefer OPENWOLF_PROJECT_DIR, fall back to CLAUDE_PROJECT_DIR for backward compat
+  const projectDir = process.env.OPENWOLF_PROJECT_DIR || process.env.CLAUDE_PROJECT_DIR || process.cwd();
   return path.join(projectDir, ".wolf");
 }
 
@@ -582,7 +582,6 @@ export function readStdin(): Promise<string> {
     process.stdin.on("data", (chunk) => chunks.push(chunk as Buffer));
     process.stdin.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
     // If no stdin data after 4s, resolve with whatever we have so far.
-    // On Windows, stdin delivery from Claude Code hooks can be slow.
     setTimeout(() => resolve(chunks.length ? Buffer.concat(chunks).toString("utf-8") : "{}"), 4000);
   });
 }

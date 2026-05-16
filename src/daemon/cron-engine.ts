@@ -295,9 +295,9 @@ export class CronEngine {
     writeJSON(ledgerPath, ledger);
   }
 
-  private hasClaude(): boolean {
+  private hasOpenCode(): boolean {
     try {
-      const cmd = process.platform === "win32" ? "where claude" : "which claude";
+      const cmd = process.platform === "win32" ? "where opencode" : "which opencode";
       execSync(cmd, { stdio: "ignore" });
       return true;
     } catch {
@@ -306,8 +306,17 @@ export class CronEngine {
   }
 
   private async runAiTask(params: { prompt: string; context_files: string[] }): Promise<void> {
-    if (!this.hasClaude()) {
-      throw new Error("Claude CLI not found. Install it from https://claude.ai/download or add it to PATH.");
+    // Try opencode first, fall back to claude
+    const useOpencode = this.hasOpenCode();
+
+    if (!useOpencode) {
+      // Fallback: try claude
+      try {
+        const cmd = process.platform === "win32" ? "where claude" : "which claude";
+        execSync(cmd, { stdio: "ignore" });
+      } catch {
+        throw new Error("Neither opencode nor claude CLI found. Install opencode from https://opencode.ai or add it to PATH.");
+      }
     }
 
     const contextParts: string[] = [];
@@ -323,21 +332,20 @@ export class CronEngine {
     const fullPrompt = `${params.prompt}\n\n---\nContext:\n${contextParts.join("\n\n")}`;
 
     try {
-      // Use spawnSync to pipe prompt via stdin — avoids command-line length limits on Windows
-      // claude -p (no argument) reads prompt from stdin
-      // Strip ANTHROPIC_API_KEY so claude uses OAuth subscription credentials
-      // instead of a potentially depleted API key
       const env = { ...process.env };
       delete env.ANTHROPIC_API_KEY;
 
-      const proc = spawnSync("claude -p --output-format text", {
+      const cmd = useOpencode
+        ? "opencode run --format json"
+        : "claude -p --output-format text";
+
+      const proc = spawnSync(cmd, {
         input: fullPrompt,
         timeout: 120000,
         encoding: "utf-8",
         cwd: this.projectRoot,
         env,
         stdio: ["pipe", "pipe", "pipe"],
-        // shell: true needed on Windows so that claude.cmd is resolved
         shell: true,
         windowsHide: true,
       });
@@ -355,7 +363,7 @@ export class CronEngine {
 
       let result = (proc.stdout || "").replace(/\r\n/g, "\n").trim();
 
-      // Strip markdown code fences if present (```markdown ... ``` or ```json ... ```)
+      // Strip markdown code fences if present
       const fenceMatch = result.match(/```[\w]*\n([\s\S]*?)\n```/);
       if (fenceMatch) {
         result = fenceMatch[1].trim();
@@ -375,7 +383,7 @@ export class CronEngine {
         }
       }
     } catch (err) {
-      throw new Error(`claude -p failed: ${err instanceof Error ? err.message : String(err)}`);
+      throw new Error(`AI task failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 }

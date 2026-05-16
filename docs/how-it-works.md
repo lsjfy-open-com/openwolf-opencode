@@ -1,6 +1,6 @@
 # How It Works
 
-OpenWolf operates as invisible middleware between you and Claude Code. It has three layers: the `.wolf/` directory (state), hooks (enforcement), and optional features (Design QC, Reframe, daemon).
+OpenWolf operates as invisible middleware between you and OpenCode. It has three layers: the `.wolf/` directory (state), hooks (enforcement), and optional features (Design QC, Reframe, daemon).
 
 ## The `.wolf/` Directory
 
@@ -8,7 +8,7 @@ Every OpenWolf project has a `.wolf/` folder containing:
 
 | File | Purpose |
 |------|---------|
-| `OPENWOLF.md` | Master instructions Claude follows every turn |
+| `OPENWOLF.md` | Master instructions OpenCode follows every turn |
 | `anatomy.md` | File index with descriptions and token estimates |
 | `cerebrum.md` | Learned preferences, conventions, and Do-Not-Repeat list |
 | `memory.md` | Chronological action log (append-only per session) |
@@ -26,7 +26,7 @@ Every OpenWolf project has a `.wolf/` folder containing:
 
 ## Hooks -- The Enforcement Layer
 
-OpenWolf registers 6 hooks with Claude Code via `.claude/settings.json`. These fire automatically:
+OpenWolf registers 6 hooks with OpenCode via `.opencode/settings.json`. These fire automatically:
 
 ```
 SessionStart ──→ session-start.js    Creates session tracker, logs to memory
@@ -55,10 +55,10 @@ Stop         ──→ stop.js             Writes session summary to token-ledge
 - `server.ts` -- Express HTTP server configuration (~520 tok)
 ```
 
-When Claude wants to read a file, the pre-read hook tells it:
+When OpenCode wants to read a file, the pre-read hook tells it:
 > "anatomy.md says `server.ts` is 'Express HTTP server configuration' at ~520 tokens"
 
-If that description is enough, Claude can skip the full read. This is how OpenWolf saves tokens.
+If that description is enough, OpenCode can skip the full read. This is how OpenWolf saves tokens.
 
 The anatomy is:
 - **Generated** by `openwolf scan` or `openwolf init`
@@ -74,13 +74,13 @@ The anatomy is:
 - **Do-Not-Repeat** -- mistakes that must not recur, with dates
 - **Decision Log** -- significant technical decisions with rationale
 
-When you correct Claude or express a preference, it updates the cerebrum. The pre-write hook then enforces Do-Not-Repeat rules on every subsequent write.
+When you correct OpenCode or express a preference, it updates the cerebrum. The pre-write hook then enforces Do-Not-Repeat rules on every subsequent write.
 
 The cerebrum is populated with your project's name and description during `openwolf init`, and is automatically reviewed and cleaned by the weekly AI reflection task.
 
 ## Design QC
 
-Design QC is a capture-only tool. It takes screenshots; Claude does the evaluation.
+Design QC is a capture-only tool. It takes screenshots; OpenCode does the evaluation.
 
 ### How it works
 
@@ -88,11 +88,11 @@ Design QC is a capture-only tool. It takes screenshots; Claude does the evaluati
 
 2. **Route detection** -- OpenWolf scans your project for route files (Next.js `app/` routes, file-based routers, etc.) and builds a list of pages to capture. You can also specify routes manually with `--routes`.
 
-3. **Sectioned screenshots** -- Each page is captured as full-page sectioned images at desktop (1440x900) and mobile (375x812) viewports. Pages are split into viewport-height sections rather than one giant screenshot. This produces images that fit within Claude's vision token budget.
+3. **Sectioned screenshots** -- Each page is captured as full-page sectioned images at desktop (1440x900) and mobile (375x812) viewports. Pages are split into viewport-height sections rather than one giant screenshot. This produces images that fit within OpenCode's vision token budget.
 
 4. **Output** -- Screenshots are saved to `.wolf/designqc-captures/`. A report is written to `.wolf/designqc-report.json` with metadata (routes, viewports, file sizes, estimated token cost).
 
-5. **Evaluation** -- You ask Claude to read the screenshots and evaluate the design. Claude uses its vision capabilities to assess layout, spacing, typography, color, responsiveness, and overall design quality. The evaluation happens inline in your conversation -- no external service needed.
+5. **Evaluation** -- You ask OpenCode to read the screenshots and evaluate the design. OpenCode uses its vision capabilities to assess layout, spacing, typography, color, responsiveness, and overall design quality. The evaluation happens inline in your conversation -- no external service needed.
 
 ### Requirements
 
@@ -102,25 +102,25 @@ Design QC is a capture-only tool. It takes screenshots; Claude does the evaluati
 
 ### Architecture choice
 
-Design QC deliberately does not call Claude itself. The capture step is deterministic and free. The evaluation step uses your existing Claude conversation context, so you can ask follow-up questions, request specific fixes, and iterate without switching tools.
+Design QC deliberately does not call OpenCode itself. The capture step is deterministic and free. The evaluation step uses your existing OpenCode conversation context, so you can ask follow-up questions, request specific fixes, and iterate without switching tools.
 
 ## Reframe
 
-Reframe helps you choose a UI component framework. It is not a CLI command -- it is a knowledge file that Claude reads when you ask about framework selection.
+Reframe helps you choose a UI component framework. It is not a CLI command -- it is a knowledge file that OpenCode reads when you ask about framework selection.
 
 ### How it works
 
 1. **Knowledge file** -- `.wolf/reframe-frameworks.md` contains a structured comparison of 12 UI component frameworks: shadcn/ui, Aceternity UI, Magic UI, DaisyUI, HeroUI, Chakra UI, Flowbite, Preline UI, Park UI, Origin UI, Headless UI, and Cult UI.
 
-2. **Decision tree** -- When you ask Claude to help pick a framework, it reads the knowledge file and asks targeted questions: What is your current stack? What is your priority (animations, speed, control, accessibility, enterprise)? Do you use Tailwind? What pages are you building?
+2. **Decision tree** -- When you ask OpenCode to help pick a framework, it reads the knowledge file and asks targeted questions: What is your current stack? What is your priority (animations, speed, control, accessibility, enterprise)? Do you use Tailwind? What pages are you building?
 
 3. **Comparison matrix** -- The file includes a feature matrix covering styling approach, animation capabilities, setup complexity, best use case, and cost for each framework.
 
-4. **Migration prompts** -- Once a framework is selected, the file provides ready-made prompts tailored to that framework. Claude adapts these to your actual project structure using `anatomy.md`.
+4. **Migration prompts** -- Once a framework is selected, the file provides ready-made prompts tailored to that framework. OpenCode adapts these to your actual project structure using `anatomy.md`.
 
 ### Why a knowledge file?
 
-Framework selection is a conversation, not a command. Different projects have different constraints, and the best framework depends on context that only emerges through questions. A knowledge file lets Claude have that conversation naturally while drawing on structured, up-to-date comparison data.
+Framework selection is a conversation, not a command. Different projects have different constraints, and the best framework depends on context that only emerges through questions. A knowledge file lets OpenCode have that conversation naturally while drawing on structured, up-to-date comparison data.
 
 ## The Daemon
 
@@ -143,9 +143,9 @@ The daemon is optional. OpenWolf works without it -- hooks are the primary layer
 
 ### AI tasks and credentials
 
-The daemon's AI tasks (`cerebrum-reflection` and `project-suggestions`) use `claude -p` to invoke the Claude CLI. These use your **Claude subscription credentials** from `~/.claude/.credentials.json` -- not API credits.
+The daemon's AI tasks (`cerebrum-reflection` and `project-suggestions`) use `opencode run` to invoke the OpenCode CLI. These use your **provider credentials** from `~/.local/share/opencode/auth.json` -- not API credits.
 
-If `ANTHROPIC_API_KEY` is set in your environment, OpenWolf automatically strips it when spawning `claude -p` to ensure the subscription OAuth token is used instead.
+If `ANTHROPIC_API_KEY` is set in your environment, OpenWolf automatically strips it when spawning `opencode run` to ensure the subscription OAuth token is used instead.
 
 ## Token Tracking
 

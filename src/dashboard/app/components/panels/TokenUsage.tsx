@@ -23,9 +23,9 @@ export function TokenUsage({ data }: { data: WolfData }) {
   const savingsPercent = withoutWolf > 0 ? Math.round((savings / withoutWolf) * 100) : 0;
 
   const comparisonData = [
-    { name: "OpenClaw + Claude", tokens: withOpenClaw, fill: "#f87171" },
-    { name: "Claude CLI (without OpenWolf)", tokens: withoutWolf, fill: "#fbbf24" },
-    { name: "OpenWolf + Claude CLI", tokens: totalTracked, fill: "#34d399" },
+    { name: "OpenClaw + AI", tokens: withOpenClaw, fill: "#f87171" },
+    { name: "OpenCode CLI (without OpenWolf)", tokens: withoutWolf, fill: "#fbbf24" },
+    { name: "OpenWolf + OpenCode CLI", tokens: totalTracked, fill: "#34d399" },
   ];
 
   return (

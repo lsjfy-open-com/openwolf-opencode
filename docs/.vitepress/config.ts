@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   title: "OpenWolf",
   description:
-    "Open-source middleware for Claude Code. Project intelligence, persistent memory, and token tracking through invisible hooks. 65% average token reduction.",
+    "Open-source middleware for OpenCode. Project intelligence, persistent memory, and token tracking through invisible hooks. 65% average token reduction.",
   head: [
     ["link", { rel: "icon", type: "image/svg+xml", href: "/wolf.svg" }],
     ["link", { rel: "canonical", href: "https://openwolf.com" }],
@@ -38,7 +38,7 @@ export default defineConfig({
       "meta",
       {
         property: "og:title",
-        content: "OpenWolf -- A Second Brain for Claude Code",
+        content: "OpenWolf -- A Second Brain for OpenCode",
       },
     ],
     [
@@ -46,7 +46,7 @@ export default defineConfig({
       {
         property: "og:description",
         content:
-          "Open-source hooks that give Claude Code project intelligence, token tracking, and mistake prevention. 2M+ tokens saved across real projects.",
+          "Open-source hooks that give OpenCode project intelligence, token tracking, and mistake prevention. 2M+ tokens saved across real projects.",
       },
     ],
     // Twitter Card
@@ -55,7 +55,7 @@ export default defineConfig({
       "meta",
       {
         name: "twitter:title",
-        content: "OpenWolf -- A Second Brain for Claude Code",
+        content: "OpenWolf -- A Second Brain for OpenCode",
       },
     ],
     [
@@ -63,7 +63,7 @@ export default defineConfig({
       {
         name: "twitter:description",
         content:
-          "Open-source hooks that give Claude Code project intelligence, token tracking, and mistake prevention. 2M+ tokens saved across real projects.",
+          "Open-source hooks that give OpenCode project intelligence, token tracking, and mistake prevention. 2M+ tokens saved across real projects.",
       },
     ],
     // Additional SEO
@@ -73,7 +73,7 @@ export default defineConfig({
       {
         name: "keywords",
         content:
-          "claude code, token tracking, context management, ai middleware, claude code hooks, token optimization, open source, developer tools",
+          "opencode code, token tracking, context management, ai middleware, opencode code hooks, token optimization, open source, developer tools",
       },
     ],
   ],

@@ -25,7 +25,7 @@ lsof -ti :18791 | xargs kill
 
 **Symptom:** Cerebrum reflection or AI suggestions show "Failed" in the Cron Control Center. Daemon log shows `Exit code 1: Credit balance is too low`.
 
-**Cause:** The `ANTHROPIC_API_KEY` environment variable is set and points to an API key with depleted credits. When Claude CLI sees this variable, it uses the API key instead of your subscription.
+**Cause:** The `ANTHROPIC_API_KEY` environment variable is set and points to an API key with depleted credits. When OpenCode CLI sees this variable, it uses the API key instead of your subscription.
 
 **Fix:** OpenWolf automatically strips `ANTHROPIC_API_KEY` from the environment when running AI tasks. If you're still seeing this error, ensure you're running the latest build:
 
@@ -41,11 +41,11 @@ openwolf daemon stop
 openwolf dashboard
 ```
 
-## AI tasks fail with "ENOENT" or "claude not found"
+## AI tasks fail with "ENOENT" or "opencode not found"
 
-**Symptom:** Daemon log shows `spawnSync claude ENOENT`.
+**Symptom:** Daemon log shows `spawnSync opencode ENOENT`.
 
-**Cause:** On Windows, Node.js `spawnSync` can't find `.cmd` wrappers (like `claude.cmd`) without `shell: true`.
+**Cause:** On Windows, Node.js `spawnSync` can't find `.cmd` wrappers (like `opencode.cmd`) without `shell: true`.
 
 **Fix:** This is fixed in the latest version. Rebuild and restart the daemon.
 
@@ -112,9 +112,9 @@ Or let OpenWolf detect it from your README. The daemon checks (in order):
 
 ## Hooks not firing
 
-**Symptom:** OpenWolf doesn't track tokens or update memory when using Claude.
+**Symptom:** OpenWolf doesn't track tokens or update memory when using OpenCode.
 
-**Cause:** Claude Code hooks aren't registered or the hook scripts are missing.
+**Cause:** OpenCode hooks aren't registered or the hook scripts are missing.
 
 **Fix:** Re-run init to register hooks:
 
@@ -128,7 +128,7 @@ Then verify:
 openwolf status
 ```
 
-Look for `✓ Claude Code hooks registered (6 matchers)`.
+Look for `✓ OpenCode plugin installed (.opencode/plugin/openwolf.ts)`.
 
 ## Anatomy scan finds 0 files
 

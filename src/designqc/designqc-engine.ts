@@ -136,7 +136,7 @@ export class DesignQCEngine {
         console.log(`    ${path.basename(s.path)} (${sizeKB}KB)`);
       }
       console.log("");
-      console.log("  Ask Claude: \"Read the screenshots in .wolf/designqc-captures/ and evaluate the design\"");
+      console.log("  Ask OpenCode: \"Read the screenshots in .wolf/designqc-captures/ and evaluate the design\"");
 
       // 7. Log to memory
       const now = new Date();

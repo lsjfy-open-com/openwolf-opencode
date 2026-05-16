@@ -28,7 +28,7 @@ The home screen. Shows:
 
 ### Activity Timeline
 
-Chronological log of everything Claude has done. Each action is a card with timestamp, description, affected files, and token estimate.
+Chronological log of everything OpenCode has done. Each action is a card with timestamp, description, affected files, and token estimate.
 
 **Controls:** filter by date range (today / this week / all), search by keyword, toggle between grouped (by session) and flat views.
 
@@ -102,10 +102,10 @@ Shows the status of the design QC capture system for visual regression and desig
 Design QC follows a three-step workflow:
 
 1. **Capture**: OpenWolf takes viewport-height sectioned screenshots of your running dev server, scrolling through the full page.
-2. **Evaluate**: Claude reviews the screenshots against your design specs or general UI/UX best practices.
-3. **Fix**: Claude suggests or applies code changes based on the evaluation.
+2. **Evaluate**: OpenCode reviews the screenshots against your design specs or general UI/UX best practices.
+3. **Fix**: OpenCode suggests or applies code changes based on the evaluation.
 
-The panel includes instructions for invoking Design QC with Claude. Use `openwolf designqc` from the CLI or trigger captures from this panel.
+The panel includes instructions for invoking Design QC with OpenCode. Use `openwolf designqc` from the CLI or trigger captures from this panel.
 
 ### AI Insights
 
@@ -117,7 +117,7 @@ AI-generated suggestions displayed in four cards:
 
 Includes a **Regenerate** button that triggers the `project-suggestions` cron task.
 
-Generated weekly using `claude -p` via your Claude subscription. You can trigger manually from the dashboard or via:
+Generated weekly using `opencode run` via your configured provider. You can trigger manually from the dashboard or via:
 
 ```bash
 openwolf cron run project-suggestions

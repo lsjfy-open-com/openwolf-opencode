@@ -50,17 +50,27 @@ export async function statusCommand(): Promise<void> {
     console.log(`  ✗ Missing ${hooksMissing} hook scripts`);
   }
 
-  // Claude settings check
-  const settingsPath = path.join(projectRoot, ".claude", "settings.json");
-  if (fs.existsSync(settingsPath)) {
-    const settings = readJSON<Record<string, unknown>>(settingsPath, {});
-    const hooks = settings.hooks as Record<string, unknown[]> | undefined;
-    if (hooks) {
-      const hookCount = Object.values(hooks).reduce((sum, arr) => sum + arr.length, 0);
-      console.log(`  ✓ Claude Code hooks registered (${hookCount} matchers)`);
-    }
+  // OpenCode plugin check
+  const pluginPath = path.join(projectRoot, ".opencode", "plugins", "openwolf.js");
+  if (fs.existsSync(pluginPath)) {
+    console.log("  ✓ OpenCode plugin installed (.opencode/plugins/openwolf.js)");
   } else {
-    console.log("  ✗ .claude/settings.json not found");
+    console.log("  ✗ .opencode/plugins/openwolf.js not found — run 'openwolf init'");
+  }
+
+  // OpenCode skill check
+  const skillPath = path.join(projectRoot, ".opencode", "skills", "openwolf", "SKILL.md");
+  if (fs.existsSync(skillPath)) {
+    console.log("  ✓ OpenCode skill installed (.opencode/skills/openwolf/SKILL.md)");
+  }
+
+  // AGENTS.md check
+  const agentsMdPath = path.join(projectRoot, "AGENTS.md");
+  if (fs.existsSync(agentsMdPath)) {
+    const agentsContent = readText(agentsMdPath);
+    if (agentsContent.includes("OpenWolf")) {
+      console.log("  ✓ AGENTS.md includes OpenWolf snippet");
+    }
   }
 
   // Token ledger stats
@@ -70,10 +80,10 @@ export async function statusCommand(): Promise<void> {
       total_reads: number;
       total_writes: number;
       total_tokens_estimated: number;
-      estimated_savings_vs_bare_cli: number;
+      token_savings_estimated: number;
     };
   }>(path.join(wolfDir, "token-ledger.json"), {
-    lifetime: { total_sessions: 0, total_reads: 0, total_writes: 0, total_tokens_estimated: 0, estimated_savings_vs_bare_cli: 0 },
+    lifetime: { total_sessions: 0, total_reads: 0, total_writes: 0, total_tokens_estimated: 0, token_savings_estimated: 0 },
   });
 
   console.log(`\nToken Stats:`);
@@ -81,7 +91,7 @@ export async function statusCommand(): Promise<void> {
   console.log(`  Total reads: ${ledger.lifetime.total_reads}`);
   console.log(`  Total writes: ${ledger.lifetime.total_writes}`);
   console.log(`  Tokens tracked: ~${ledger.lifetime.total_tokens_estimated.toLocaleString()}`);
-  console.log(`  Estimated savings: ~${ledger.lifetime.estimated_savings_vs_bare_cli.toLocaleString()} tokens`);
+  console.log(`  Estimated savings: ~${ledger.lifetime.token_savings_estimated.toLocaleString()} tokens`);
 
   // Anatomy stats
   const anatomyContent = readText(path.join(wolfDir, "anatomy.md"));

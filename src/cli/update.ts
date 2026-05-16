@@ -3,7 +3,7 @@
  *
  * For each project:
  * 1. Creates a timestamped backup in .wolf/backups/
- * 2. Updates hooks, templates, protocol files, and claude rules
+ * 2. Updates plugins, templates, protocol files
  * 3. Preserves all user data (cerebrum, memory, anatomy, buglog, ledger)
  * 4. Reports results per project
  */
@@ -42,21 +42,6 @@ const BACKUP_FILES = [
   ...ALWAYS_OVERWRITE,
   ...USER_DATA_FILES,
 ];
-
-const HOOK_SETTINGS = {
-  hooks: {
-    SessionStart: [{ matcher: "", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/.wolf/hooks/session-start.js"', timeout: 5 }] }],
-    PreToolUse: [
-      { matcher: "Read", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/.wolf/hooks/pre-read.js"', timeout: 5 }] },
-      { matcher: "Write|Edit|MultiEdit", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/.wolf/hooks/pre-write.js"', timeout: 5 }] },
-    ],
-    PostToolUse: [
-      { matcher: "Read", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/.wolf/hooks/post-read.js"', timeout: 5 }] },
-      { matcher: "Write|Edit|MultiEdit", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/.wolf/hooks/post-write.js"', timeout: 10 }] },
-    ],
-    Stop: [{ matcher: "", hooks: [{ type: "command", command: 'node "$CLAUDE_PROJECT_DIR/.wolf/hooks/stop.js"', timeout: 10 }] }],
-  },
-};
 
 interface UpdateResult {
   project: RegisteredProject;
@@ -179,34 +164,60 @@ async function updateProject(
     copyHookScripts(wolfDir);
     console.log(`    ✓ Hook scripts updated`);
 
-    // 4. Update .claude/settings.json hooks
-    const claudeDir = path.join(root, ".claude");
-    ensureDir(claudeDir);
-    const settingsPath = path.join(claudeDir, "settings.json");
-    if (fs.existsSync(settingsPath)) {
-      const existing = readJSON<Record<string, unknown>>(settingsPath, {});
-      const merged = replaceOpenWolfHooks(existing, HOOK_SETTINGS);
-      writeJSON(settingsPath, merged);
-    } else {
-      writeJSON(settingsPath, HOOK_SETTINGS);
+    // 4. Update .opencode/plugins/openwolf.js
+    const pluginsDir = path.join(root, ".opencode", "plugins");
+    ensureDir(pluginsDir);
+    const pluginDest = path.join(pluginsDir, "openwolf.js");
+    // Try compiled plugin from dist first
+    const pluginCandidates = [
+      path.resolve(__dirname, "..", "plugin", "openwolf-plugin.js"),
+      path.resolve(__dirname, "..", "..", "plugin", "openwolf-plugin.js"),
+      path.resolve(__dirname, "..", "..", "dist", "plugin", "openwolf-plugin.js"),
+    ];
+    let pluginCopied = false;
+    for (const src of pluginCandidates) {
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, pluginDest);
+        pluginCopied = true;
+        break;
+      }
     }
-    console.log(`    ✓ Claude settings updated`);
+    if (!pluginCopied) {
+      // Fallback: try .wolf/hooks/
+      const wolfPlugin = path.join(wolfDir, "hooks", "openwolf-plugin.js");
+      if (fs.existsSync(wolfPlugin)) {
+        fs.copyFileSync(wolfPlugin, pluginDest);
+        pluginCopied = true;
+      }
+    }
+    console.log(`    ✓ OpenCode plugin ${pluginCopied ? "updated" : "skipped (not found)"}`);
 
-    // 5. Update .claude/rules/openwolf.md
-    const rulesDir = path.join(claudeDir, "rules");
-    ensureDir(rulesDir);
-    const rulesContent = readTemplateContent("claude-rules-openwolf.md", templatesDir);
-    writeText(path.join(rulesDir, "openwolf.md"), rulesContent);
-    console.log(`    ✓ Claude rules updated`);
+    // 5. Update .opencode/skills/openwolf/SKILL.md
+    const skillsDir = path.join(root, ".opencode", "skills", "openwolf");
+    ensureDir(skillsDir);
+    const skillContent = readTemplateContent("opencode-skill.md", templatesDir);
+    if (skillContent) {
+      writeText(path.join(skillsDir, "SKILL.md"), skillContent);
+      console.log(`    ✓ OpenCode skill updated`);
+    }
 
-    // 6. Update CLAUDE.md snippet if it references OpenWolf
+    // 6. Update AGENTS.md snippet if it references OpenWolf
+    const agentsMdPath = path.join(root, "AGENTS.md");
+    const snippetContent = readTemplateContent("agents-md-snippet.md", templatesDir);
+    if (fs.existsSync(agentsMdPath)) {
+      const existing = readText(agentsMdPath);
+      if (!existing.includes("OpenWolf")) {
+        writeText(agentsMdPath, snippetContent + "\n\n" + existing);
+        console.log(`    ✓ AGENTS.md updated`);
+      }
+    }
+
+    // Also update CLAUDE.md for backward compatibility
     const claudeMdPath = path.join(root, "CLAUDE.md");
-    const snippetContent = readTemplateContent("claude-md-snippet.md", templatesDir);
     if (fs.existsSync(claudeMdPath)) {
       const existing = readText(claudeMdPath);
       if (!existing.includes("OpenWolf")) {
         writeText(claudeMdPath, snippetContent + "\n\n" + existing);
-        console.log(`    ✓ CLAUDE.md updated`);
       }
     }
 
@@ -270,19 +281,18 @@ function createBackup(wolfDir: string): string {
     } catch {}
   }
 
-  // Also backup .claude/settings.json and rules
+  // Also backup .opencode/plugins/openwolf.js
   const projectRoot = path.dirname(wolfDir);
-  const claudeSettings = path.join(projectRoot, ".claude", "settings.json");
-  if (fs.existsSync(claudeSettings)) {
-    const claudeBackup = path.join(backupDir, ".claude");
-    ensureDir(claudeBackup);
-    fs.copyFileSync(claudeSettings, path.join(claudeBackup, "settings.json"));
+  const opencodePlugin = path.join(projectRoot, ".opencode", "plugins", "openwolf.js");
+  if (fs.existsSync(opencodePlugin)) {
+    const opencodeBackup = path.join(backupDir, ".opencode", "plugins");
+    ensureDir(opencodeBackup);
+    fs.copyFileSync(opencodePlugin, path.join(opencodeBackup, "openwolf.js"));
   }
-  const claudeRules = path.join(projectRoot, ".claude", "rules", "openwolf.md");
-  if (fs.existsSync(claudeRules)) {
-    const rulesBackup = path.join(backupDir, ".claude", "rules");
-    ensureDir(rulesBackup);
-    fs.copyFileSync(claudeRules, path.join(rulesBackup, "openwolf.md"));
+  // Also backup AGENTS.md
+  const agentsMd = path.join(projectRoot, "AGENTS.md");
+  if (fs.existsSync(agentsMd)) {
+    fs.copyFileSync(agentsMd, path.join(backupDir, "AGENTS.md"));
   }
 
   return backupDir;
@@ -309,8 +319,7 @@ function readTemplateContent(filename: string, templatesDir: string): string {
     return fs.readFileSync(filePath, "utf-8");
   }
   const templates: Record<string, string> = {
-    "claude-md-snippet.md": `# OpenWolf\n\n@.wolf/OPENWOLF.md\n\nThis project uses OpenWolf for context management. Read and follow .wolf/OPENWOLF.md every session. Check .wolf/cerebrum.md before generating code. Check .wolf/anatomy.md before reading files.`,
-    "claude-rules-openwolf.md": `---\ndescription: OpenWolf protocol enforcement — active on all files\nglobs: **/*\n---\n\n- Check .wolf/anatomy.md before reading any project file\n- Check .wolf/cerebrum.md Do-Not-Repeat list before generating code\n- After writing or editing files, update .wolf/anatomy.md and append to .wolf/memory.md\n- After receiving a user correction, update .wolf/cerebrum.md immediately (Preferences, Learnings, or Do-Not-Repeat)\n- LEARN from every interaction: if you discover a convention, user preference, or project pattern, add it to .wolf/cerebrum.md. Low threshold — when in doubt, log it.\n- BEFORE fixing any bug or error: read .wolf/buglog.json for known fixes\n- AFTER fixing any bug, error, failed test, failed build, or user-reported problem: ALWAYS log to .wolf/buglog.json with error_message, root_cause, fix, and tags\n- If you edit a file more than twice in a session, that likely indicates a bug — log it to .wolf/buglog.json\n- When the user asks to check/evaluate UI design: run \`openwolf designqc\` to capture screenshots, then read them from .wolf/designqc-captures/\n- When the user asks to change/pick/migrate UI framework: read .wolf/reframe-frameworks.md, ask decision questions, recommend a framework, then execute with the framework's prompt`,
+    "agents-md-snippet.md": `# OpenWolf\n\n> This project uses OpenWolf for context management.\n\n## Instructions\n- Read and follow .wolf/OPENWOLF.md every session\n- Check .wolf/cerebrum.md before generating code\n- Check .wolf/anatomy.md before reading files`,
   };
   return templates[filename] ?? "";
 }
@@ -352,33 +361,7 @@ function copyHookScripts(wolfDir: string): void {
   fs.writeFileSync(hooksPkgPath, JSON.stringify({ type: "module" }, null, 2) + "\n", "utf-8");
 }
 
-function replaceOpenWolfHooks(
-  existing: Record<string, unknown>,
-  hookSettings: typeof HOOK_SETTINGS
-): Record<string, unknown> {
-  const merged = { ...existing };
-  if (!merged.hooks) merged.hooks = {};
-  const hooks = merged.hooks as Record<string, Array<{ matcher: string; hooks: Array<{ command?: string; type: string }> }>>;
 
-  for (const [event, newMatchers] of Object.entries(hookSettings.hooks)) {
-    if (!hooks[event]) hooks[event] = [];
-
-    // Remove existing OpenWolf hook entries
-    hooks[event] = hooks[event].filter((entry) => {
-      const isOpenWolfHook = entry.hooks?.some(
-        (h) => h.command && h.command.includes(".wolf/hooks/")
-      );
-      return !isOpenWolfHook;
-    });
-
-    // Add new OpenWolf hooks
-    for (const matcher of newMatchers) {
-      hooks[event].push(matcher);
-    }
-  }
-
-  return merged;
-}
 
 /**
  * List all registered projects (for `openwolf update --list`)
@@ -457,22 +440,21 @@ export function restoreCommand(backupName?: string): void {
     }
   }
 
-  // Restore .claude settings if present
-  const claudeBackup = path.join(backupDir, ".claude");
-  if (fs.existsSync(claudeBackup)) {
+  // Restore .opencode plugin if present
+  const opencodeBackup = path.join(backupDir, ".opencode");
+  if (fs.existsSync(opencodeBackup)) {
     const projectRoot = path.dirname(wolfDir);
-    const settingsBackup = path.join(claudeBackup, "settings.json");
-    if (fs.existsSync(settingsBackup)) {
-      const dest = path.join(projectRoot, ".claude", "settings.json");
+    const pluginBackup = path.join(opencodeBackup, "plugins", "openwolf.js");
+    if (fs.existsSync(pluginBackup)) {
+      const dest = path.join(projectRoot, ".opencode", "plugins", "openwolf.js");
       ensureDir(path.dirname(dest));
-      fs.copyFileSync(settingsBackup, dest);
+      fs.copyFileSync(pluginBackup, dest);
     }
-    const rulesBackup = path.join(claudeBackup, "rules", "openwolf.md");
-    if (fs.existsSync(rulesBackup)) {
-      const dest = path.join(projectRoot, ".claude", "rules", "openwolf.md");
-      ensureDir(path.dirname(dest));
-      fs.copyFileSync(rulesBackup, dest);
-    }
+  }
+  // Restore AGENTS.md if present
+  const agentsBackup = path.join(backupDir, "AGENTS.md");
+  if (fs.existsSync(agentsBackup)) {
+    fs.copyFileSync(agentsBackup, path.join(path.dirname(wolfDir), "AGENTS.md"));
   }
 
   console.log(`Restored ${files.length} files from backup "${backupName}".`);

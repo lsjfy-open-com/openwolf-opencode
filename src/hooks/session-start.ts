@@ -39,7 +39,7 @@ async function main(): Promise<void> {
   const header = `\n## Session: ${now.toISOString().slice(0, 10)} ${timeShort()}\n\n| Time | Action | File(s) | Outcome | ~Tokens |\n|------|--------|---------|---------|--------|\n`;
   appendMarkdown(memoryPath, header);
 
-  // Check cerebrum freshness — remind Claude to learn
+  // Check cerebrum freshness — remind the AI to learn
   try {
     const cerebrumPath = path.join(wolfDir, "cerebrum.md");
     const cerebrumContent = fs.readFileSync(cerebrumPath, "utf-8");

@@ -66,8 +66,8 @@ Controls the daemon's task scheduler.
 | `max_retry_attempts` | `3` | Times to retry a failed task before dead-lettering |
 | `dead_letter_enabled` | `true` | Move exhausted tasks to dead letter queue |
 | `heartbeat_interval_minutes` | `30` | Daemon health check frequency |
-| `use_claude_p` | `true` | Use `claude -p` (subscription) for AI-powered tasks |
-| `api_key_env` | `null` | Environment variable name for API key override. When `null`, uses `claude -p` OAuth credentials |
+| `use_opencode` | `true` | Use `opencode run` (subscription) for AI-powered tasks |
+| `api_key_env` | `null` | Environment variable name for API key override. When `null`, uses `opencode run` OAuth credentials |
 
 ## `memory`
 

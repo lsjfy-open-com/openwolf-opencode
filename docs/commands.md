@@ -14,16 +14,16 @@ openwolf init
 1. Detects the project root (looks for `.git`, `package.json`, `Cargo.toml`, etc.)
 2. Creates `.wolf/` with 10 template files
 3. Copies 7 hook scripts to `.wolf/hooks/`
-4. Registers 6 Claude Code hooks in `.claude/settings.json`
-5. Creates `.claude/rules/openwolf.md`
-6. Prepends the OpenWolf snippet to `CLAUDE.md`
+4. Registers 6 OpenCode hooks in `.opencode/settings.json`
+5. Creates `.opencode/skill/openwolf/SKILL.md`
+6. Prepends the OpenWolf snippet to `AGENTS.md`
 7. Runs an initial anatomy scan
 8. Populates `cerebrum.md` with detected project name and description
 
 If `.wolf/` already exists, it reinitializes (overwrites templates, preserves learned data).
 
 ::: info
-If `.claude/settings.json` already has hooks, OpenWolf merges its hooks in -- existing hooks are not overwritten.
+If `.opencode/settings.json` already has hooks, OpenWolf merges its hooks in -- existing hooks are not overwritten.
 :::
 
 ---
@@ -43,7 +43,7 @@ OpenWolf Status
 
   ✓ All 10 core files present
   ✓ All 7 hook scripts present
-  ✓ Claude Code hooks registered (6 matchers)
+  ✓ OpenCode plugin installed (.opencode/plugin/openwolf.ts)
 
 Token Stats:
   Sessions: 12
@@ -191,13 +191,13 @@ Cron Tasks
     Schedule: Sundays at 3:00 AM
     Status: enabled
     Last run: 2 days ago
-    Uses: claude -p (subscription)
+    Uses: opencode run
 
   AI suggestions (project-suggestions)
     Schedule: Mondays at 4:00 AM
     Status: enabled
     Last run: 5 days ago
-    Uses: claude -p (subscription)
+    Uses: opencode run
 ```
 
 ### `openwolf cron run <id>`
@@ -279,7 +279,7 @@ openwolf restore 2026-03-15T10-30-00
 
 ## `openwolf designqc`
 
-Capture full-page screenshots for design evaluation by Claude Code.
+Capture full-page screenshots for design evaluation by OpenCode.
 
 ```bash
 openwolf designqc [target]
@@ -316,12 +316,12 @@ Screenshots are JPEG at the configured quality to keep file sizes and token coun
 # Step 1: capture screenshots
 openwolf designqc
 
-# Step 2: ask Claude to evaluate the design
-# In your Claude Code session, say:
+# Step 2: ask OpenCode to evaluate the design
+# In your OpenCode session, say:
 #   "Read the screenshots in .wolf/designqc-captures/ and evaluate the design"
 ```
 
-Claude evaluates the screenshots inline using its vision capabilities. No separate API key is needed beyond your existing Claude Code subscription.
+OpenCode evaluates the screenshots inline using its vision capabilities. No separate API key is needed beyond your existing OpenCode subscription.
 
 **Examples:**
 

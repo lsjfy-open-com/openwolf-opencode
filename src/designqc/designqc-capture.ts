@@ -47,7 +47,7 @@ export function findChromePath(configPath?: string | null): string {
 /**
  * Capture a full page as sectioned viewport-height screenshots.
  * Returns multiple screenshots — one per "fold" of the page.
- * This gives Claude focused views of each section without one massive image.
+ * This gives OpenCode focused views of each section without one massive image.
  */
 export async function captureRouteSectioned(
   page: import("puppeteer-core").Page,

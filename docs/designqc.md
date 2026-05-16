@@ -1,10 +1,10 @@
 # Design QC
 
-Screenshot capture tool that lets Claude Code evaluate your app's design visually. Capture-only architecture -- no separate API key needed.
+Screenshot capture tool that lets OpenCode evaluate your app's design visually. Capture-only architecture -- no separate API key needed.
 
 ## Overview
 
-Design QC captures screenshots of your running application and saves them where Claude can read them. You then ask Claude to evaluate the images, provide feedback, or verify fixes. The entire workflow stays inside your existing Claude subscription -- no vision API key required.
+Design QC captures screenshots of your running application and saves them where OpenCode can read them. You then ask OpenCode to evaluate the images, provide feedback, or verify fixes. The entire workflow stays inside your existing OpenCode subscription -- no vision API key required.
 
 ## Requirements
 
@@ -85,22 +85,22 @@ openwolf designqc --quality 50                    # lower quality = fewer tokens
 
 ---
 
-## Workflow with Claude
+## Workflow with OpenCode
 
-The intended workflow is a feedback loop between Design QC captures and Claude's visual analysis:
+The intended workflow is a feedback loop between Design QC captures and OpenCode's visual analysis:
 
 ```
 You: openwolf designqc
-You (to Claude): Read the screenshots in .wolf/designqc-captures/ and evaluate the design
-Claude: [reads images, provides detailed design feedback]
+You (to OpenCode): Read the screenshots in .wolf/designqc-captures/ and evaluate the design
+OpenCode: [reads images, provides detailed design feedback]
 You: Fix the spacing issues on the pricing page
-Claude: [makes the CSS/component fixes]
+OpenCode: [makes the CSS/component fixes]
 You: openwolf designqc
-You (to Claude): Read the new screenshots and verify the fixes
-Claude: [compares before/after, confirms fixes or flags remaining issues]
+You (to OpenCode): Read the new screenshots and verify the fixes
+OpenCode: [compares before/after, confirms fixes or flags remaining issues]
 ```
 
-This loop works because Claude Code can read image files directly. No additional API calls beyond your normal Claude usage.
+This loop works because OpenCode can read image files directly. No additional API calls beyond your normal OpenCode usage.
 
 ---
 
@@ -141,7 +141,7 @@ If no browser is found, Design QC exits with an error and instructions to set th
 
 ## Token Cost
 
-Each screenshot consumes approximately **2,500 tokens** when Claude reads it.
+Each screenshot consumes approximately **2,500 tokens** when OpenCode reads it.
 
 The math for a single route with default settings:
 

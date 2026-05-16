@@ -179,7 +179,7 @@ async function main(): Promise<void> {
 
 /**
  * Check if files were edited multiple times but buglog.json wasn't updated.
- * Emit a stderr reminder so Claude sees it in the next turn.
+ * Emit a stderr reminder so the AI sees it in the next turn.
  */
 function checkForMissingBugLogs(wolfDir: string, session: SessionData): void {
   if (!session.edit_counts) return;

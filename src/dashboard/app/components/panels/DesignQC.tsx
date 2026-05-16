@@ -14,9 +14,9 @@ export function DesignQC({ data }: { data: WolfData }) {
         <div className="space-y-2 text-sm" style={{ color: "var(--text-muted)" }}>
           <p>1. Run <code className="px-1.5 py-0.5 rounded text-xs" style={{ background: "var(--bg-base)" }}>openwolf designqc --url http://localhost:3000</code></p>
           <p>2. OpenWolf captures compressed screenshots of your app</p>
-          <p>3. In your Claude Code session, ask Claude to evaluate the screenshots:</p>
+          <p>3. In your OpenCode session, ask it to evaluate the screenshots:</p>
           <p className="pl-4 italic">"Read the screenshots in .wolf/designqc-captures/ and evaluate the design"</p>
-          <p>4. Claude sees the images, evaluates design, and can fix issues right in your session</p>
+          <p>4. OpenCode sees the images, evaluates design, and can fix issues right in your session</p>
         </div>
       </div>
 

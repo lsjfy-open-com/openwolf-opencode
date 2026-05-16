@@ -42,7 +42,7 @@ async function main(): Promise<void> {
   checkCerebrum(wolfDir, allContent);
 
   // 2. Bug log: search for similar past bugs when editing code
-  // This fires when Claude is about to edit a file — if the edit looks like a fix
+  // This fires when the AI is about to edit a file — if the edit looks like a fix
   // (changing error handling, modifying catch blocks, etc.), check the bug log
   if (filePath && (oldStr || content)) {
     checkBugLog(wolfDir, filePath, oldStr, newStr, content);
@@ -108,7 +108,7 @@ function checkBugLog(wolfDir: string, filePath: string, oldStr: string, newStr: 
   const basename = path.basename(filePath);
 
   // ONLY surface bugs that match the SAME file being edited.
-  // Cross-file matching is too noisy and risks misdirecting Claude.
+  // Cross-file matching is too noisy and risks misdirecting the AI.
   const fileMatches = bugLog.bugs.filter(b => {
     const bugBasename = path.basename(b.file);
     return bugBasename === basename;
@@ -134,7 +134,7 @@ function checkBugLog(wolfDir: string, filePath: string, oldStr: string, newStr: 
 
   if (relevant.length === 0) return;
 
-  // Surface as a FYI, not a directive — Claude should evaluate, not blindly apply
+  // Surface as a FYI, not a directive — the AI should evaluate, not blindly apply
   process.stderr.write(
     `📋 OpenWolf buglog: ${relevant.length} past bug(s) found for ${basename} — review for context, do NOT apply blindly:\n`
   );

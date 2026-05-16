@@ -1,24 +1,24 @@
 # Reframe
 
-Curated knowledge base of 12 modern UI frameworks with battle-tested prompts for Claude. Reframe is not a CLI command -- it is a reference file that Claude reads and uses to guide framework selection and migration.
+Curated knowledge base of 12 modern UI frameworks with battle-tested prompts for OpenCode. Reframe is not a CLI command -- it is a reference file that OpenCode reads and uses to guide framework selection and migration.
 
 ## Overview
 
-When you ask Claude to change, pick, or migrate your UI framework, Claude reads `.wolf/reframe-frameworks.md` (installed during `openwolf init`). The file contains decision criteria, framework profiles, and framework-specific prompts that Claude adapts to your project using `anatomy.md`.
+When you ask OpenCode to change, pick, or migrate your UI framework, OpenCode reads `.wolf/reframe-frameworks.md` (installed during `openwolf init`). The file contains decision criteria, framework profiles, and framework-specific prompts that OpenCode adapts to your project using `anatomy.md`.
 
-No CLI invocation needed. Just talk to Claude about your UI framework and Reframe activates automatically.
+No CLI invocation needed. Just talk to OpenCode about your UI framework and Reframe activates automatically.
 
 ---
 
 ## How It Works
 
 1. `.wolf/reframe-frameworks.md` is created during `openwolf init`
-2. When you mention changing or picking a UI framework, Claude reads the file
-3. Claude asks **5 decision questions** to understand your priorities and constraints
-4. Claude recommends a framework based on your answers
-5. Claude uses the framework-specific prompt -- adapted to your project via `anatomy.md` -- to execute the installation and migration
+2. When you mention changing or picking a UI framework, OpenCode reads the file
+3. OpenCode asks **5 decision questions** to understand your priorities and constraints
+4. OpenCode recommends a framework based on your answers
+5. OpenCode uses the framework-specific prompt -- adapted to your project via `anatomy.md` -- to execute the installation and migration
 
-The framework-specific prompts handle dependency installation, configuration, component patterns, and common migration steps. Claude tailors them to your actual project structure.
+The framework-specific prompts handle dependency installation, configuration, component patterns, and common migration steps. OpenCode tailors them to your actual project structure.
 
 ---
 
@@ -68,22 +68,22 @@ Use this priority table to narrow the choice before reading full profiles:
 
 ```
 You: I want to switch my UI framework
-Claude: [reads reframe-frameworks.md]
+OpenCode: [reads reframe-frameworks.md]
         What framework does your project currently use?
 You: React with plain Tailwind, no component library
-Claude: What's your priority -- animations, speed, control, or accessibility?
+OpenCode: What's your priority -- animations, speed, control, or accessibility?
 You: Stunning animations for a landing page
-Claude: I'd recommend Aceternity UI or Magic UI.
+OpenCode: I'd recommend Aceternity UI or Magic UI.
         Aceternity gives cinematic scroll effects with Framer Motion.
         Magic UI gives a polished SaaS look inspired by Linear and Vercel.
         Which direction fits better?
 You: Let's go with Aceternity
-Claude: [uses Aceternity prompt adapted to your project]
+OpenCode: [uses Aceternity prompt adapted to your project]
         [installs dependencies]
         [refactors components with animation patterns]
 ```
 
-Claude handles the entire migration: installing packages, updating configs, converting components, and verifying the build still passes.
+OpenCode handles the entire migration: installing packages, updating configs, converting components, and verifying the build still passes.
 
 ---
 
@@ -91,9 +91,9 @@ Claude handles the entire migration: installing packages, updating configs, conv
 
 Reframe pairs naturally with [Design QC](/designqc) in a full visual feedback loop:
 
-1. **Evaluate** -- run `openwolf designqc` and ask Claude to review the current design
-2. **Decide** -- discuss framework options with Claude (Reframe activates)
-3. **Migrate** -- Claude installs the chosen framework and rebuilds components
-4. **Verify** -- run `openwolf designqc` again and ask Claude to compare before/after
+1. **Evaluate** -- run `openwolf designqc` and ask OpenCode to review the current design
+2. **Decide** -- discuss framework options with OpenCode (Reframe activates)
+3. **Migrate** -- OpenCode installs the chosen framework and rebuilds components
+4. **Verify** -- run `openwolf designqc` again and ask OpenCode to compare before/after
 
 This loop keeps design decisions grounded in actual visual output rather than guesswork.

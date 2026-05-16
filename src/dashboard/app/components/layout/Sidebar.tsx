@@ -73,7 +73,7 @@ export function Sidebar({ activePanel, onNavigate, daemonStatus, projectName, th
         </nav>
         <div className="p-4 space-y-2" style={{ borderTop: "1px solid var(--border)" }}>
           <p className="text-xs leading-relaxed" style={{ color: "var(--text-faint)" }}>
-            Token-conscious AI project brain for Claude Code.
+            Token-conscious AI project brain for OpenCode.
           </p>
           <div className="flex items-center justify-between">
             <a href="https://openwolf.com" target="_blank" rel="noopener noreferrer"

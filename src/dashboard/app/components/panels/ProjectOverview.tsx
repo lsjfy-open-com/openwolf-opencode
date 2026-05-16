@@ -48,7 +48,7 @@ export function ProjectOverview({ data }: { data: WolfData }) {
       <div className="rounded-xl p-5" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
         <h3 className="font-medium mb-3" style={{ color: "var(--text-secondary)" }}>Recent Activity</h3>
         {memory.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No activity yet. Start a Claude Code session to see activity here.</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No activity yet. Start an OpenCode session to see activity here.</p>
         ) : (
           <div className="space-y-2">
             {memory.slice(0, 3).flatMap((session) =>

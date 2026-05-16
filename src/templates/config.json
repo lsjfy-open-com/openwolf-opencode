@@ -41,7 +41,7 @@
       "max_retry_attempts": 3,
       "dead_letter_enabled": true,
       "heartbeat_interval_minutes": 30,
-      "use_claude_p": true,
+      "use_opencode": true,
       "api_key_env": null
     },
     "memory": {

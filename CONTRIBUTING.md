@@ -34,7 +34,7 @@ src/
 ├── designqc/      Screenshot capture for design evaluation
 ├── scanner/       Project structure scanner (anatomy.md)
 ├── tracker/       Token tracking and ledger
-├── hooks/         Claude Code lifecycle hooks
+├── hooks/         OpenCode plugin and legacy hook scripts
 ├── dashboard/     React web dashboard (Vite + TailwindCSS)
 ├── buglog/        Bug memory system
 ├── utils/         Shared utilities
@@ -52,7 +52,7 @@ pnpm docs:dev        # Local docs site
 ### Key Files
 
 - `src/cli/program/register.subclis.ts` — where CLI subcommands are registered
-- `src/hooks/` — the 6 Claude Code lifecycle hook scripts
+- `src/hooks/` — the OpenCode plugin and hook scripts
 - `src/templates/` — files copied into `.wolf/` on `openwolf init`
 - `src/utils/platform.ts` — platform detection (Windows/macOS/Linux)
 
@@ -77,7 +77,7 @@ pnpm docs:dev        # Local docs site
 Open an issue at [github.com/cytostack/openwolf/issues](https://github.com/cytostack/openwolf/issues) with:
 
 - Your OS and Node.js version
-- Claude Code version
+- OpenCode version
 - Steps to reproduce
 - Expected vs actual behavior
 - Relevant logs (if any)

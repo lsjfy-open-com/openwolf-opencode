@@ -11,7 +11,7 @@
 ## 1. 克隆并构建
 
 ```bash
-git clone https://github.com/cytostack/openwolf.git openwolf-opencode
+git clone https://github.com/lsjfy-open-com/openwolf-opencode.git
 cd openwolf-opencode
 pnpm install
 pnpm build

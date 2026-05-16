@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/openwolf"><img src="https://img.shields.io/npm/v/openwolf.svg" alt="npm version" /></a>
+  <a href="https://github.com/lsjfy-open-com/openwolf-opencode"><img src="https://img.shields.io/badge/github-lsjfy--open--com%2Fopenwolf--opencode-blue.svg" alt="GitHub" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-20%2B-green.svg" alt="Node.js" /></a>
 </p>
@@ -50,8 +50,8 @@ openwolf init
 ### From Source (Local Development)
 
 ```bash
-git clone https://github.com/cytostack/openwolf.git
-cd openwolf
+git clone https://github.com/lsjfy-open-com/openwolf-opencode.git
+cd openwolf-opencode
 pnpm install && pnpm build
 npm link
 cd your-project && openwolf init
@@ -241,7 +241,7 @@ OpenWolf is not an AI wrapper. It is a smart plugin and a `.wolf/` directory. It
 - OpenCode plugin hooks are a relatively new feature. OpenWolf falls back to `AGENTS.md` instructions when the plugin isn't loaded.
 - Token tracking is estimation-based (character-to-token ratio), not exact API counts. Accurate to within ~15%.
 - `cerebrum.md` depends on OpenCode following instructions to update it after corrections. Compliance is ~85-90%, not 100%.
-- This is v1.0.4. Things may break. [File issues](https://github.com/cytostack/openwolf/issues).
+- This is v1.0.4. Things may break. [File issues](https://github.com/lsjfy-open-com/openwolf-opencode/issues).
 
 ## Origin Story
 

@@ -53,11 +53,11 @@
   "author": "Cytostack Pvt Ltd",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cytostack/openwolf.git"
+    "url": "https://github.com/lsjfy-open-com/openwolf-opencode.git"
   },
-  "homepage": "https://github.com/cytostack/openwolf",
+  "homepage": "https://github.com/lsjfy-open-com/openwolf-opencode",
   "bugs": {
-    "url": "https://github.com/cytostack/openwolf/issues"
+    "url": "https://github.com/lsjfy-open-com/openwolf-opencode/issues"
   },
   "keywords": [
     "opencode",
